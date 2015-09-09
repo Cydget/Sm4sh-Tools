@@ -65,24 +65,20 @@ namespace Sm4shCommand
                 return;
             }
 
-            UnknownCommand unkC = null;
+
             for (int i = 0; i < lines.Length; i++)
             {
                 if (lines[i].StartsWith("0x"))
                 {
-                    if (unkC == null)
-                        unkC = new UnknownCommand();
-                    unkC.data.Add(Int32.Parse(lines[i].Substring(2, 8), System.Globalization.NumberStyles.HexNumber));
+
+                    _workingFile.EventLists[_linked.AnimationCRC].Add(
+                        new RawCommandData(UInt32.Parse(lines[i].Substring(2, 8), System.Globalization.NumberStyles.HexNumber)));
                     continue;
                 }
+
                 foreach (CommandInfo e in Runtime.commandDictionary)
                     if (lines[i].StartsWith(e.Name))
                     {
-                        if (unkC != null)
-                        {
-                            _workingFile.EventLists[_linked.AnimationCRC].Add(unkC);
-                            unkC = null;
-                        }
                         string temp = lines[i].Substring(lines[i].IndexOf('(')).Trim(new char[] { '(', ')' });
                         List<string> Params = temp.Replace("0x", "").Split(',').ToList();
                         Command c = new Command(workingEndian, e);
@@ -177,6 +173,8 @@ namespace Sm4shCommand
             ITSCodeBox box = (ITSCodeBox)tabControl1.SelectedTab.Controls[0];
             box.Text = sb.ToString();
             _linked = list;
+            box._list = list;
+            box.Invalidate();
         }
         #endregion
 
@@ -194,8 +192,8 @@ namespace Sm4shCommand
                 if (tabControl1.SelectedTab == null)
                     return;
                 ITSCodeBox box = (ITSCodeBox)tabControl1.SelectedTab.Controls[0];
-                box.CommandDictionary = Runtime.commandDictionary;
-                box.Tooltip.Dictionary = dict;
+                //box.CommandDictionary = Runtime.commandDictionary;
+                //box.Tooltip.Dictionary = dict;
             }
             else
                 MessageBox.Show("Could not load Events.cfg");

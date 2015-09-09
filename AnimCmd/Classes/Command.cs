@@ -64,30 +64,32 @@ namespace Sm4shCommand.Classes
             return tmp;
         }
     }
-    public unsafe class UnknownCommand : Command
+    public unsafe class RawCommandData : Command
     {
-        public List<int> data = new List<int>();
+        public RawCommandData(uint data)
+        {
+            _data = data;
+        }
 
-        public override int CalcSize() { return data.Count * 4; }
+        private uint _data;
+
+        public override int CalcSize() { return 4; }
         public override string ToString()
         {
-            string s1 = "";
-            for (int i = 0; i < data.Count; i++)
-                s1 += String.Format("0x{0:X8}{1}", data[i], i + 1 != data.Count ? "\n" : "");
-            return s1;
+            return String.Format("0x{0:X8}", _data);
         }
         public override byte[] GetArray()
         {
             // ew this sux; you better fix this later, me.
-            byte[] _data = new byte[data.Count * 4];
-            for(int i=0; i<_data.Length; i+=4)
-            {
-                _data[i] = (byte)(data[i/4] >> 24);
-                _data[i+1] = (byte)(data[i/4] >> 16);
-                _data[i+2] = (byte)(data[i/4] >> 8);
-                _data[i+3] = (byte)(data[i/4]);
-            }
-            return _data;
+            byte[] tmp = new byte[4];
+
+            tmp[0] = (byte)(_data >> 24);
+            tmp[1] = (byte)(_data >> 16);
+            tmp[2] = (byte)(_data >> 8);
+            tmp[3] = (byte)(_data);
+
+            return tmp;
+
         }
     }
 }

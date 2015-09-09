@@ -286,7 +286,7 @@
             this.itsCodeBox1.Size = new System.Drawing.Size(689, 406);
             this.itsCodeBox1.TabIndex = 0;
             this.itsCodeBox1.Text = "";
-            this.itsCodeBox1.WordWrap = false;
+            //this.itsCodeBox1.WordWrap = false;
             // 
             // toolStrip1
             // 

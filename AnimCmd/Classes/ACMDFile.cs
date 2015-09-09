@@ -138,7 +138,6 @@ namespace Sm4shCommand.Classes
             CommandList _cur = new CommandList(CRC);
 
             Command c = null;
-            UnknownCommand unkC = null;
 
             VoidPtr addr = (WorkingSource.Address + Offset);
 
@@ -154,13 +153,6 @@ namespace Sm4shCommand.Classes
                 // If a command definition exists, use that info to deserialize.
                 if (info != null)
                 {
-                    // If previous commands were unknown, add them here.
-                    if (unkC != null)
-                    {
-                        _cur.Add(unkC);
-                        unkC = null;
-                    }
-
                     // Get command parameters and add the command to the event list.
                     c = new Command(Endian, info);
                     for (int i = 0; i < info.ParamSpecifiers.Count; i++)
@@ -177,13 +169,10 @@ namespace Sm4shCommand.Classes
                     addr += c.CalcSize();
                 }
                 // If there is no command definition, this is unknown data.
-                // Add the current word to the unk command and continue adding
-                // until we hit a known command
+                // Add current word as raw data.
                 else if (info == null)
                 {
-                    if (unkC == null)
-                        unkC = new UnknownCommand();
-                    unkC.data.Add(Util.GetWordUnsafe(addr, Endian));
+                    _cur.Add(new RawCommandData((uint)Util.GetWordUnsafe(addr, Endian)));
                     addr += 0x04;
                 }
             }
